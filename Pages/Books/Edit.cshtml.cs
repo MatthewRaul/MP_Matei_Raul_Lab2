@@ -39,7 +39,7 @@ namespace Matei_Raul_Lab2.Pages.Books
             Book = book;
             ViewData["PublisherID"] = 
                 new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
-            ViewData["AuthorID"] = 
+            ViewData["AuthorsID"] = 
                 new SelectList(_context.Set<Author>(), "ID", "LastName",Book.AuthorsID);
             return Page();
         }
@@ -50,7 +50,7 @@ namespace Matei_Raul_Lab2.Pages.Books
         {
             if (!ModelState.IsValid)
             {
-                ViewData["AuthorID"] = new SelectList(_context.Set<Author>(), "ID", "LastName",Book.AuthorsID);
+                ViewData["AuthorsID"] = new SelectList(_context.Set<Author>(), "ID", "LastName",Book.AuthorsID);
                 return Page();
             }
 
