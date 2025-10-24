@@ -35,7 +35,7 @@ namespace Matei_Raul_Lab2.Pages.Books
             }
             else
             {
-                await _context.Entry(book).Reference(b => b.Author).LoadAsync();      
+                await _context.Entry(book).Reference(b => b.Authors).LoadAsync();      
                 await _context.Entry(book).Reference(b => b.Publisher).LoadAsync();
                 Book = book;
             }

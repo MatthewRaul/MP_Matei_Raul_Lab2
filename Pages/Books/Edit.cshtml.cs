@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Lab2.Models;
 using Matei_Raul_Lab2.Data;
 using Matei_Raul_Lab2.Models;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Matei_Raul_Lab2.Pages.Books
 {
@@ -30,17 +31,23 @@ namespace Matei_Raul_Lab2.Pages.Books
             {
                 return NotFound();
             }
-
-            var book =  await _context.Book.FirstOrDefaultAsync(m => m.ID == id);
-            if (book == null)
+            Book = await _context.Book.Include(b => b.Authors).Include(b => b.Publisher)
+                .AsNoTracking().FirstOrDefaultAsync(m => m.ID == id);
+           
+            if (Book == null)
             {
                 return NotFound();
             }
-            Book = book;
+            var authorList = _context.Authors.Select(a => new
+            {
+                a.ID,
+                FullName = a.LastName + ' '
+            + a.FirstName
+            }).ToList();
             ViewData["PublisherID"] = 
                 new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
             ViewData["AuthorsID"] = 
-                new SelectList(_context.Set<Author>(), "ID", "LastName",Book.AuthorsID);
+                new SelectList(authorList, "ID", "FullName",Book.AuthorsID);
             return Page();
         }
 
@@ -50,7 +57,14 @@ namespace Matei_Raul_Lab2.Pages.Books
         {
             if (!ModelState.IsValid)
             {
-                ViewData["AuthorsID"] = new SelectList(_context.Set<Author>(), "ID", "LastName",Book.AuthorsID);
+                var authorList = _context.Authors.Select(a => new
+                {
+                    a.ID,
+                    FullName = a.LastName + ' ' + a.FirstName
+                }).ToList();
+                ViewData["AuthorsID"] = new SelectList(authorList, "ID", "FullName",Book.AuthorsID);
+
+                ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName", Book.PublisherID);
                 return Page();
             }
 

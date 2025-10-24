@@ -22,12 +22,15 @@ namespace Matei_Raul_Lab2.Pages.Books
 
         public IActionResult OnGet()
         {
+            var authorList = _context.Authors.Select
+                (a => new { a.ID, FullName = a.LastName + " "+ a.FirstName }).ToList();
+
             ViewData["PublisherID"] = 
-                new SelectList(_context.Set<Publisher>(), "ID", "PublisherName");
+                new SelectList(_context.Publisher, "ID", "PublisherName");
 
 
             ViewData["AuthorsID"] =
-                new SelectList(_context.Set<Author>(), "ID", "LastName");
+                new SelectList(authorList, "ID", "FullName");
 
 
 
@@ -43,7 +46,11 @@ namespace Matei_Raul_Lab2.Pages.Books
         {
             if (!ModelState.IsValid)
             {
-                ViewData["AuthorsID"] = new SelectList(_context.Set<Author>(), "ID", "LastName");
+                var authorList = _context.Authors.Select
+                    (a => new { a.ID, FullName = a.LastName + ' ' + a.FirstName }).ToList();
+                ViewData["AuthorsID"] = new SelectList(authorList, "ID", "FullName", Book.AuthorsID);
+                ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName", Book.PublisherID);
+
                 return Page();
             }
 
