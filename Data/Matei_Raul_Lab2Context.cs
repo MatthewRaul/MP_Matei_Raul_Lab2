@@ -19,5 +19,6 @@ namespace Matei_Raul_Lab2.Data
         public DbSet<Matei_Raul_Lab2.Models.Publisher> Publisher { get; set; } = default!;
 
         public DbSet<Author> Authors { get; set; } = default!;
+        public DbSet<Matei_Raul_Lab2.Models.Category> Category { get; set; } = default!;
     }
 }
