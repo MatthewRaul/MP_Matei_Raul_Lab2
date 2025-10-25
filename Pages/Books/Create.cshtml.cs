@@ -11,7 +11,7 @@ using Matei_Raul_Lab2.Models;
 
 namespace Matei_Raul_Lab2.Pages.Books
 {
-    public class CreateModel : PageModel
+    public class CreateModel : BookCategoriesPageModel
     {
         private readonly Matei_Raul_Lab2.Data.Matei_Raul_Lab2Context _context;
 
@@ -31,6 +31,9 @@ namespace Matei_Raul_Lab2.Pages.Books
 
             ViewData["AuthorsID"] =
                 new SelectList(authorList, "ID", "FullName");
+            var book = new Book();
+            book.BookCategories = new List<BookCategory>();
+            PopulateAssignedCategoryData(_context, book);
 
 
 
@@ -42,21 +45,25 @@ namespace Matei_Raul_Lab2.Pages.Books
         public Book Book { get; set; } = default!;
 
         // For more information, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(string[] selectedCategories)
         {
-            if (!ModelState.IsValid)
+            var newBook = new Book();
+            if (selectedCategories != null)
             {
-                var authorList = _context.Authors.Select
-                    (a => new { a.ID, FullName = a.LastName + ' ' + a.FirstName }).ToList();
-                ViewData["AuthorsID"] = new SelectList(authorList, "ID", "FullName", Book.AuthorsID);
-                ViewData["PublisherID"] = new SelectList(_context.Publisher, "ID", "PublisherName", Book.PublisherID);
-
-                return Page();
+                newBook.BookCategories = new List<BookCategory>();
+                foreach (var cat in selectedCategories)
+                {
+                    var catToAdd = new BookCategory
+                    {
+                        CategoryID = int.Parse(cat)
+                    };
+                    newBook.BookCategories.Add(catToAdd);
+                }
             }
 
+            Book.BookCategories = newBook.BookCategories;
             _context.Book.Add(Book);
             await _context.SaveChangesAsync();
-
             return RedirectToPage("./Index");
         }
     }
