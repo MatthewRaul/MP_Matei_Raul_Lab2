@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Matei_Raul_Lab2.Data;
 using Matei_Raul_Lab2.Models;
+using Matei_Raul_Lab2.Models.ViewModels;
 
 namespace Matei_Raul_Lab2.Pages.Categories
 {
@@ -18,12 +19,26 @@ namespace Matei_Raul_Lab2.Pages.Categories
         {
             _context = context;
         }
+        public CategoryIndexData CategoryData {  get; set; }
 
         public IList<Category> Category { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int? id)
         {
-            Category = await _context.Category.ToListAsync();
+            CategoryData = new CategoryIndexData();
+            CategoryData.Categories = await _context.Category.Include(c => c.BookCategories)
+                 .ThenInclude(bc => bc.Book).ThenInclude(b => b.Authors)
+                 .OrderBy(c => c.CategoryName).AsNoTracking().ToListAsync();
+
+
+            if (id != null)
+            {
+                CategoryData.CategoryID = id.Value;
+                var cat= CategoryData.Categories.Single(c=>c.ID==id.Value);
+                CategoryData.Books = cat.BookCategories.Select(bc => bc.Book);
+            }
         }
+
+                
     }
 }

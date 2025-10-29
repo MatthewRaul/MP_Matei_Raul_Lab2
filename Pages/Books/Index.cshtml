@@ -11,28 +11,49 @@
     <a asp-page="Create">Create New</a>
 </p>
 
+<form asp-group="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by Book Title/Author Name:
+            <input type="text" name="searchString" value="@Model.CurrentFilter"/>
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-page="./Index">Back to full list</a>
+            
+        </p>
+    </div>    
+</form>
+
 <table class="table">
     <thead>
         <tr>
+            
             <th>
+                <a asp-page="./Index" asp-route-sortOrder="@Model.TitleSort">
                 @Html.DisplayNameFor(model => model.BookD.Books.FirstOrDefault().Title)
+                </a>
             </th>
+            
             <th>
-                Authors
+                 <a asp-page="./Index" asp-route-sortOrder="@Model.AuthorSort">
+                @Html.DisplayNameFor(Model =>Model.BookD.Books.FirstOrDefault().Authors)    
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.BookD.Books.FirstOrDefault().Price)
             </th>
+           
             <th>
-                @Html.DisplayNameFor(model => model.BookD.Books.FirstOrDefault().PublishingDate)
+                
+                @Html.DisplayNameFor(Model =>Model.BookD.Books.FirstOrDefault().PublishingDate)    
+                </a>
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(Model=> Model.BookD.Books.FirstOrDefault().Publisher)
             </th>
             <th>
-                Publisher
+                @Html.DisplayNameFor(Model=>Model.BookD.Books.FirstOrDefault().BookCategories)
             </th>
-            <th>
-                Categories
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -50,7 +71,7 @@
         <td>
             @if (item.Authors != null)
             {
-                @item.Authors.LastName @: @item.Authors.FirstName
+                @item.Authors.FullName;
             }
         </td>
         <td>
