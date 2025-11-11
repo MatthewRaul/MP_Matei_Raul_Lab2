@@ -2,72 +2,45 @@
 
 #nullable disable
 
-namespace Matei_Raul_Lab2.Migrations
+namespace Nume_Pren_Lab2.Migrations
 {
-    /// <inheritdoc />
     public partial class BookCategory : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Category",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryName = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Category", x => x.ID);
-                });
+            migrationBuilder.Sql(@"
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'Category' AND schema_id = SCHEMA_ID('dbo'))
+BEGIN
+    CREATE TABLE [dbo].[Category](
+        [ID] INT NOT NULL IDENTITY(1,1),
+        [CategoryName] nvarchar(max) NOT NULL,
+        CONSTRAINT [PK_Category] PRIMARY KEY ([ID])
+    );
+END
+");
 
-            migrationBuilder.CreateTable(
-                name: "BookCategory",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BookID = table.Column<int>(type: "int", nullable: false),
-                    CategoryID = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_BookCategory", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_BookCategory_Book_BookID",
-                        column: x => x.BookID,
-                        principalTable: "Book",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_BookCategory_Category_CategoryID",
-                        column: x => x.CategoryID,
-                        principalTable: "Category",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookCategory_BookID",
-                table: "BookCategory",
-                column: "BookID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookCategory_CategoryID",
-                table: "BookCategory",
-                column: "CategoryID");
+            migrationBuilder.Sql(@"
+IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = 'BookCategory' AND schema_id = SCHEMA_ID('dbo'))
+BEGIN
+    CREATE TABLE [dbo].[BookCategory](
+        [BookID] INT NOT NULL,
+        [CategoryID] INT NOT NULL,
+        CONSTRAINT [PK_BookCategory] PRIMARY KEY ([BookID],[CategoryID]),
+        CONSTRAINT [FK_BookCategory_Book_BookID] FOREIGN KEY ([BookID]) REFERENCES [dbo].[Book]([ID]) ON DELETE CASCADE,
+        CONSTRAINT [FK_BookCategory_Category_CategoryID] FOREIGN KEY ([CategoryID]) REFERENCES [dbo].[Category]([ID]) ON DELETE CASCADE
+    );
+    CREATE INDEX [IX_BookCategory_CategoryID] ON [dbo].[BookCategory]([CategoryID]);
+END
+");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "BookCategory");
-
-            migrationBuilder.DropTable(
-                name: "Category");
+            migrationBuilder.Sql(@"
+IF OBJECT_ID('dbo.BookCategory', 'U') IS NOT NULL
+    DROP TABLE [dbo].[BookCategory];
+");
+            // Intenționat nu se șterge Category aici, pentru că putea exista dinainte.
         }
     }
 }

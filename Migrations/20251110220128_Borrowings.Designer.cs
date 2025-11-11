@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Matei_Raul_Lab2.Migrations
 {
     [DbContext(typeof(Matei_Raul_Lab2Context))]
-    [Migration("20251025091701_DropAuthorID")]
-    partial class DropAuthorID
+    [Migration("20251110220128_Borrowings")]
+    partial class Borrowings
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,6 +102,32 @@ namespace Matei_Raul_Lab2.Migrations
                     b.ToTable("BookCategory");
                 });
 
+            modelBuilder.Entity("Matei_Raul_Lab2.Models.Borrowing", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int?>("BookID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MemberID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BookID");
+
+                    b.HasIndex("MemberID");
+
+                    b.ToTable("Borrowing");
+                });
+
             modelBuilder.Entity("Matei_Raul_Lab2.Models.Category", b =>
                 {
                     b.Property<int>("ID")
@@ -117,6 +143,35 @@ namespace Matei_Raul_Lab2.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("Matei_Raul_Lab2.Models.Member", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Adress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Matei_Raul_Lab2.Models.Publisher", b =>
@@ -170,9 +225,26 @@ namespace Matei_Raul_Lab2.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Matei_Raul_Lab2.Models.Borrowing", b =>
+                {
+                    b.HasOne("Lab2.Models.Book", "Book")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("BookID");
+
+                    b.HasOne("Matei_Raul_Lab2.Models.Member", "Member")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("MemberID");
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("Lab2.Models.Book", b =>
                 {
                     b.Navigation("BookCategories");
+
+                    b.Navigation("Borrowings");
                 });
 
             modelBuilder.Entity("Matei_Raul_Lab2.Models.Author", b =>
@@ -183,6 +255,11 @@ namespace Matei_Raul_Lab2.Migrations
             modelBuilder.Entity("Matei_Raul_Lab2.Models.Category", b =>
                 {
                     b.Navigation("BookCategories");
+                });
+
+            modelBuilder.Entity("Matei_Raul_Lab2.Models.Member", b =>
+                {
+                    b.Navigation("Borrowings");
                 });
 
             modelBuilder.Entity("Matei_Raul_Lab2.Models.Publisher", b =>
