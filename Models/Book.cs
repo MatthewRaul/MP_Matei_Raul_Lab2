@@ -25,6 +25,7 @@ namespace Lab2.Models
         public int? AuthorsID { get; set; }
         public Author? Authors { get; set; }
 
-        public ICollection<BookCategory>? BookCategories { get; set; }
+        public ICollection<BookCategory>? BookCategories { get; set; } = new List<BookCategory>();
+        public ICollection<Borrowing>? Borrowings { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Matei_Raul_Lab2.Data;
 using Matei_Raul_Lab2.Models;
+using Matei_Raul_Lab2.Models.ViewModels;
 
 namespace Matei_Raul_Lab2.Pages.Publishers
 {
@@ -21,9 +22,30 @@ namespace Matei_Raul_Lab2.Pages.Publishers
 
         public IList<Publisher> Publisher { get;set; } = default!;
 
-        public async Task OnGetAsync()
+        public PublisherIndexData PublisherData { get; set; }
+        public int PublisherID { get; set; }
+        public int BookID { get; set; }
+
+        public async Task OnGetAsync(int? id, int? bookID)
         {
-            Publisher = await _context.Publisher.ToListAsync();
+            PublisherData = new PublisherIndexData();
+
+            PublisherData.Publishers = await _context.Publisher
+                .Include(i => i.Books)
+                    .ThenInclude(b => b.Authors) 
+                .OrderBy(i => i.PublisherName)
+                .AsNoTracking()
+                .ToListAsync();
+
+            if (id != null)
+            {
+                PublisherID = id.Value;
+                var publisher = PublisherData.Publishers
+                    .Where(i => i.ID == id.Value)
+                    .Single();
+                PublisherData.Books = publisher.Books;
+            }
         }
+
     }
 }

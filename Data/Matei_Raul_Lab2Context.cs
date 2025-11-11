@@ -20,5 +20,7 @@ namespace Matei_Raul_Lab2.Data
 
         public DbSet<Author> Authors { get; set; } = default!;
         public DbSet<Matei_Raul_Lab2.Models.Category> Category { get; set; } = default!;
+        public DbSet<Matei_Raul_Lab2.Models.Member> Member { get; set; } = default!;
+        public DbSet<Matei_Raul_Lab2.Models.Borrowing> Borrowing { get; set; } = default!;
     }
 }
