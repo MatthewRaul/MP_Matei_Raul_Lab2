@@ -1,10 +1,12 @@
 ﻿using Lab2.Models;
 using Matei_Raul_Lab2.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Matei_Raul_Lab2.Pages.Books
 {
+    [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
         private readonly Matei_Raul_Lab2.Data.Matei_Raul_Lab2Context _context;

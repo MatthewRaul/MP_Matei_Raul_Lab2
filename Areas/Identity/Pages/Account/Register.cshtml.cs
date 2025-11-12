@@ -95,6 +95,14 @@ namespace Matei_Raul_Lab2.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 // Confirmare email (standard scaffolding)
+                var roleResult = await _userManager.AddToRoleAsync(user, "User");
+                if (!roleResult.Succeeded)
+                {
+                    ModelState.AddModelError(string.Empty, "Nu se poate atribui rolul User");
+                    return Page();
+                }
+
+                
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));

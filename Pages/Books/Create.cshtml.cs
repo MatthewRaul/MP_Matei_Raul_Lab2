@@ -8,13 +8,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Lab2.Models;
 using Matei_Raul_Lab2.Data;
 using Matei_Raul_Lab2.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Matei_Raul_Lab2.Pages.Books
 {
+    [Authorize(Roles = "Admin")]
     public class CreateModel : BookCategoriesPageModel
     {
         private readonly Matei_Raul_Lab2.Data.Matei_Raul_Lab2Context _context;
-
+       
         public CreateModel(Matei_Raul_Lab2.Data.Matei_Raul_Lab2Context context)
         {
             _context = context;
